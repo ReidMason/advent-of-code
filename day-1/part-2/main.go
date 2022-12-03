@@ -15,7 +15,6 @@ func main() {
 
 	input := parseInput(rawInput)
 
-	findHighestNumberOfCalories(input)
 	findTopThreeCalorieCounts(input)
 }
 
@@ -75,26 +74,6 @@ func sumIntSlice(slice []int) int {
 	}
 
 	return total
-}
-
-func findHighestNumberOfCalories(input []string) {
-	var highestCarryAmount int
-	total := 0
-	for i, v := range input {
-		if v != "" {
-			weight, _ := strconv.Atoi(v)
-			total += weight
-		}
-
-		if v == "" || i == len(input)-1 {
-			if total > highestCarryAmount {
-				highestCarryAmount = total
-			}
-			total = 0
-		}
-	}
-
-	log.Printf("The Elf carrying the most calories has %d", highestCarryAmount)
 }
 
 func getInput() (string, error) {
