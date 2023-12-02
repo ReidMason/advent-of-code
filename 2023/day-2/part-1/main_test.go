@@ -1,18 +1,8 @@
 package main
 
 import (
-	"log"
-	"os"
 	"testing"
 )
-
-func loadInput() string {
-	data, err := os.ReadFile("input.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	return string(data)
-}
 
 func TestGetCalibrationsValueSum(t *testing.T) {
 	input := `Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
