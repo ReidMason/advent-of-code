@@ -25,30 +25,19 @@ func process(input string) int {
 	total := 0
 	lines := strings.Split(strings.TrimRight(input, "\n\r"), "\n")
 
-	for _, line := range lines {
-		id, possible := parseLine(line)
+	for i, line := range lines {
+		possible := parseLine(line)
 		if possible {
-			total += id
+			total += i + 1
 		}
 	}
 
 	return total
 }
 
-func parseLine(line string) (int, bool) {
+func parseLine(line string) bool {
 	line += ";"
-	pos := 5
-
-	id := ""
-	for pos < len(line) {
-		c := line[pos]
-		if c == ':' {
-			break
-		}
-		id += string(c)
-		pos++
-	}
-	numId, _ := strconv.Atoi(id)
+	pos := strings.Index(line, ":")
 
 	pos += 2
 	currVal := ""
@@ -64,7 +53,7 @@ func parseLine(line string) (int, bool) {
 		} else if c == ',' || c == ';' {
 			numCurrVal, _ := strconv.Atoi(currVal)
 			if !isValid(currColour, numCurrVal) {
-				return numId, false
+				return false
 			}
 			currColour = ""
 			currVal = ""
@@ -83,7 +72,7 @@ func parseLine(line string) (int, bool) {
 		pos++
 	}
 
-	return numId, true
+	return true
 }
 
 func isValid(colour string, count int) bool {
