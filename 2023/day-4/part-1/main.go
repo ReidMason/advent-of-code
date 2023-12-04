@@ -6,10 +6,6 @@ import (
 	"strings"
 )
 
-type Game struct {
-	id, red, gree, blue int
-}
-
 func main() {
 	data, err := os.ReadFile("input.txt")
 	if err != nil {
@@ -19,8 +15,6 @@ func main() {
 	res := process(input)
 	log.Println(res)
 }
-
-var idxs = []int{-1, 1}
 
 func process(input string) int {
 	lines := strings.Split(input, "\n")
