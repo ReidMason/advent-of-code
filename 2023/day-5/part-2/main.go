@@ -5,7 +5,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"sync"
 )
 
 func main() {
@@ -21,76 +20,32 @@ func main() {
 func process(input string) int {
 	pos := 0
 	lines := strings.Split(input, "\n")
-	seedLine := lines[pos]
 
+	seeds := getSeeds(lines[pos])
 	pos += 3
 
-	mappings := make([][]Mapping, 0)
-	log.Println("Building mapping")
 	for pos < len(lines) {
-		mapping, newPos := buildMapping(lines, pos)
-		pos = newPos
-		mappings = append(mappings, mapping)
+		seeds, pos = buildMapping(lines, pos, seeds)
 	}
-	log.Println("Done building mapping")
 
-	log.Println("Processing seeds")
-	return getSeeds(seedLine, mappings)
+	return minSlice(seeds)
 }
 
-func getSeeds(line string, mappings [][]Mapping) int {
-	rawStrs := strings.Split(line, " ")[1:]
-
-	c := make(chan int)
-	var wg sync.WaitGroup
-
-	log.Println("Starting seeds process")
-	total := len(rawStrs)
-	for i := 0; i < total; i += 2 {
-		seedNum, _ := strconv.Atoi(rawStrs[i])
-		seedRange, _ := strconv.Atoi(rawStrs[i+1])
-
-		wg.Add(1)
-		go func(seedStart, seedRange int) {
-			defer wg.Done()
-			seeds := make([]int, 0)
-			for j := 0; j < seedRange; j++ {
-				seed := seedStart + j
-				seed = applyMapping(seed, mappings)
-				seeds = append(seeds, seed)
-			}
-			c <- minSlice(seeds)
-		}(seedNum, seedRange)
-	}
-
-	go func() {
-		wg.Wait()
-		close(c)
-		log.Println("Seeds process done, collating...")
-	}()
-
-	minVal := -1
-	for s := range c {
-		if minVal == -1 || s < minVal {
-			minVal = s
-		}
-	}
-
-	log.Println("process done, collating...")
-	return minVal
+type Seed struct {
+	start int
+	span  int
 }
 
-func applyMapping(seed int, mappings [][]Mapping) int {
-	for _, mapping := range mappings {
-		for _, m := range mapping {
-			if seed >= m.start && seed <= m.end {
-				seed += m.inc
-				break
-			}
-		}
+func getSeeds(line string) []Seed {
+	seeds := make([]Seed, 0)
+	seedStrs := strings.Split(line, " ")[1:]
+	for i := 0; i < len(seedStrs); i += 2 {
+		seedNum, _ := strconv.Atoi(seedStrs[i])
+		seedRange, _ := strconv.Atoi(seedStrs[i+1])
+		seeds = append(seeds, Seed{seedNum, seedRange})
 	}
 
-	return seed
+	return seeds
 }
 
 func get(mapping map[int]int, source int) int {
@@ -102,24 +57,20 @@ func get(mapping map[int]int, source int) int {
 	return val
 }
 
-func minSlice(vals []int) int {
-	lowest := vals[0]
+func minSlice(vals []Seed) int {
+	lowest := vals[0].start
 	for _, val := range vals {
-		if val < lowest {
-			lowest = val
+		if val.start < lowest {
+			lowest = val.start
 		}
 	}
 
 	return lowest
 }
 
-type Mapping struct {
-	start, end, inc int
-}
-
-func buildMapping(lines []string, pos int) ([]Mapping, int) {
+func buildMapping(lines []string, pos int, seeds []Seed) ([]Seed, int) {
+	processed := make([]Seed, 0)
 	currLine := lines[pos]
-	mapping := make([]Mapping, 0)
 
 	for currLine != "" {
 		nums := strings.Split(currLine, " ")
@@ -128,7 +79,54 @@ func buildMapping(lines []string, pos int) ([]Mapping, int) {
 		destStart, _ := strconv.Atoi(nums[0])
 		sourceEnd := sourceStart + steps - 1
 
-		mapping = append(mapping, Mapping{sourceStart, sourceEnd, destStart - sourceStart})
+		seedCopy := make([]Seed, len(seeds))
+		copy(seedCopy, seeds)
+
+		x := len(seedCopy)
+		for x > 0 {
+			newSeedCopy, seed := pop(seedCopy)
+			seedCopy = newSeedCopy
+			x = len(seedCopy)
+
+			seedStart := seed.start
+			seedEnd := seed.start + seed.span
+
+			if seedStart >= sourceStart && seedEnd <= sourceEnd {
+				diff := seed.start - sourceStart
+
+				seeds = remove(seeds, seed)
+				seed.start = destStart + diff
+				processed = append(processed, seed)
+
+			} else if seedStart >= sourceStart && seedStart <= sourceEnd {
+				seeds = remove(seeds, seed)
+
+				endDiff := seedEnd - sourceEnd - 1
+				newSeed1 := Seed{sourceEnd + 1, endDiff}
+				seeds = append(seeds, newSeed1)
+				seedCopy = append(seedCopy, newSeed1)
+
+				newSeed2 := Seed{seedStart, seed.span - endDiff}
+				diff := seed.start - sourceStart
+				newSeed2.start = destStart + diff
+				processed = append(processed, newSeed2)
+
+			} else if seedEnd > sourceStart && seedEnd <= sourceEnd {
+				seeds = remove(seeds, seed)
+
+				newDiff := seedEnd - sourceStart
+				newSeed1 := Seed{sourceStart, newDiff}
+
+				diff := newSeed1.start - sourceStart
+				newSeed1.start = destStart + diff
+				processed = append(processed, newSeed1)
+
+				newDiff = sourceStart - seedStart
+				newSeed2 := Seed{seedStart, newDiff}
+				seeds = append(seeds, newSeed2)
+				seedCopy = append(seedCopy, newSeed2)
+			}
+		}
 
 		pos++
 		currLine = lines[pos]
@@ -136,5 +134,51 @@ func buildMapping(lines []string, pos int) ([]Mapping, int) {
 
 	pos += 2
 
-	return mapping, pos
+	for _, seed := range seeds {
+		processed = append(processed, seed)
+	}
+
+	return processed, pos
+}
+
+func pop(seeds []Seed) ([]Seed, Seed) {
+	i := 0
+	res := seeds[i]
+	seeds = append(seeds[:i], seeds[i+1:]...)
+
+	return seeds, res
+}
+
+func remove(seeds []Seed, seed Seed) []Seed {
+	newSeeds := make([]Seed, 0)
+	for _, oldSeed := range seeds {
+		theSame := oldSeed.start == seed.start && oldSeed.span == seed.span
+		if !theSame {
+			newSeeds = append(newSeeds, oldSeed)
+		}
+	}
+
+	return newSeeds
+}
+
+func testingThing() {
+	seed := Seed{50, 10}
+
+	steps := 5
+	sourceStart := 50
+	destStart := 100
+	sourceEnd := sourceStart + steps - 1
+
+	seedStart := seed.start
+	seedEnd := seed.start + seed.span
+
+	endDiff := seedEnd - sourceEnd - 1
+	newSeed := Seed{sourceEnd + 1, endDiff}
+	log.Println(newSeed)
+
+	diff := seed.start - sourceStart
+	newSeed = Seed{seedStart, seed.span - endDiff}
+	newSeed.start = destStart + diff
+
+	log.Println(newSeed)
 }
