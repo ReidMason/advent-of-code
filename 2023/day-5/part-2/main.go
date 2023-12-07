@@ -160,25 +160,3 @@ func remove(seeds []Seed, seed Seed) []Seed {
 
 	return newSeeds
 }
-
-func testingThing() {
-	seed := Seed{50, 10}
-
-	steps := 5
-	sourceStart := 50
-	destStart := 100
-	sourceEnd := sourceStart + steps - 1
-
-	seedStart := seed.start
-	seedEnd := seed.start + seed.span
-
-	endDiff := seedEnd - sourceEnd - 1
-	newSeed := Seed{sourceEnd + 1, endDiff}
-	log.Println(newSeed)
-
-	diff := seed.start - sourceStart
-	newSeed = Seed{seedStart, seed.span - endDiff}
-	newSeed.start = destStart + diff
-
-	log.Println(newSeed)
-}
