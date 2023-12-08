@@ -29,7 +29,7 @@ pub fn process(input: &str) -> usize {
     for (race_time, record_distance) in zip(times, distances) {
         let mut count = 0;
 
-        for held_down in 1..race_time-1 {
+        for held_down in 1..race_time - 1 {
             let time_remaining = race_time - held_down;
             let distance = held_down * time_remaining;
 
