@@ -23,7 +23,7 @@ type Hand struct {
 	bet, score int
 }
 
-var cards = []string{"A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"}
+var cards = [...]string{"A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"}
 
 func process(input string) int {
 	hands := make([]Hand, 0)
@@ -78,7 +78,7 @@ func getScore(hand string) int {
 	return maxCount
 }
 
-func findIndex(arr []string, val string) int {
+func findIndex(arr [13]string, val string) int {
 	for i, v := range arr {
 		if v == val {
 			return i
