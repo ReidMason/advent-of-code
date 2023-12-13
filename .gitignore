@@ -1,0 +1,4 @@
+rust
+target
+input.txt
+*_test.go
