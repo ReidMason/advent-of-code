@@ -2,3 +2,4 @@ rust
 target
 input.txt
 *_test.go
+.DS_Store
