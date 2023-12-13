@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -76,20 +75,12 @@ func process(input string) int {
 	}
 
 	// Find distances
-	done := ""
 	total := 0
 	for i, galaxy := range galaxies {
 		for j, galaxy2 := range galaxies {
 			if i == j {
 				continue
 			}
-
-			indicator := fmt.Sprintf("{%d}{%d} ", min(i, j), max(i, j))
-			if strings.Contains(done, indicator) {
-				continue
-			}
-
-			done += indicator
 
 			dx := abs(galaxy[0] - galaxy2[0])
 			dy := abs(galaxy[1] - galaxy2[1])
@@ -98,7 +89,7 @@ func process(input string) int {
 		}
 	}
 
-	return total
+	return total / 2
 }
 
 func abs(num int) int {
