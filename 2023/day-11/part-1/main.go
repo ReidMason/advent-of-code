@@ -6,13 +6,6 @@ import (
 	"strings"
 )
 
-var validStrs = []string{
-	"|7F",
-	"|JL",
-	"-FL",
-	"-J7",
-}
-
 func main() {
 	data, err := os.ReadFile("input.txt")
 	if err != nil {
