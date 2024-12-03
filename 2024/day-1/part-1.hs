@@ -6,7 +6,7 @@ main = do
     input <- readFile "input.txt"
     let inputs = map (map read . split) (lines input)
     let (left, right) = getColumns inputs
-    let total = sum (zipWith (curry diff) (sort left) (sort right))
+    let total = sum $ zipWith (curry diff) (sort left) (sort right)
 
     print total
 
