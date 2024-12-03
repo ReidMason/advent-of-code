@@ -14,7 +14,7 @@ func main() {
 		panic(err)
 	}
 
-	result := Day2Part1(string(input))
+	result := Day2Part2(string(input))
 	fmt.Println(result)
 }
 
@@ -29,6 +29,39 @@ func Day2Part1(input string) int {
 	}
 
 	return total
+}
+
+func Day2Part2(input string) int {
+	total := 0
+	lines := strings.Split(input, "\n")
+
+	for _, line := range lines {
+		chars := strings.Split(line, " ")
+		for i := -1; i < len(chars); i++ {
+			check := strings.Join(remove(chars, max(i, 0)), " ")
+			if isLineValid(check) {
+				total++
+				break
+			}
+		}
+	}
+
+	return total
+}
+
+func remove(slice []string, index int) []string {
+	newSlice := make([]string, len(slice)-1)
+	copy(newSlice, slice[:index])
+	copy(newSlice[index:], slice[index+1:])
+	return newSlice
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+
+	return b
 }
 
 func isLineValid(line string) bool {
