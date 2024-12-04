@@ -99,8 +99,9 @@ func Day4Part2(input string) int {
 
 	score := 0
 	diagonals := []int{-width - 1, width + 1, width - 1, -width + 1}
-	for i, char := range chars {
-		if char != "A" || (i+1)%width == 0 || i%width == 0 || i < width-1 || i >= len(chars)-width {
+	for i := width; i < len(chars)-width; i++ {
+		char := chars[i]
+		if char != "A" || (i+1)%width == 0 || i%width == 0 {
 			continue
 		}
 
