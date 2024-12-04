@@ -12,7 +12,7 @@ func main() {
 		panic(err)
 	}
 
-	result := Day4Part1(string(input))
+	result := Day4Part2(string(input))
 	fmt.Println(result)
 }
 
@@ -85,4 +85,37 @@ func getnextchar(current string) string {
 	default:
 		return "NONE"
 	}
+}
+
+func Day4Part2(input string) int {
+	input = strings.TrimSpace(input)
+	lines := strings.Split(input, "\n")
+	width := len(lines[0])
+
+	chars := make([]string, 0)
+	for _, line := range lines {
+		chars = append(chars, strings.Split(line, "")...)
+	}
+
+	score := 0
+	diagonals := []int{-width - 1, width + 1, width - 1, -width + 1}
+	for i, char := range chars {
+		if char != "A" || (i+1)%width == 0 || i%width == 0 || i < width-1 || i >= len(chars)-width {
+			continue
+		}
+
+		tiles := make([]string, 4)
+		for j, diagonal := range diagonals {
+			tiles[j] = chars[i+diagonal]
+		}
+
+		if !((tiles[0] == "M" && tiles[1] == "S") || (tiles[0] == "S" && tiles[1] == "M")) ||
+			!((tiles[2] == "M" && tiles[3] == "S") || (tiles[2] == "S" && tiles[3] == "M")) {
+			continue
+		}
+
+		score++
+	}
+
+	return score
 }
