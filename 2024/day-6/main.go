@@ -39,18 +39,15 @@ func Day6Part1(input string) int {
 	visitedCells := make(map[string]bool)
 
 	for {
-		fmt.Println("Guard is at:", guardX, guardY)
 		visitedCells[fmt.Sprintf("%d,%d", guardX, guardY)] = true
 		frontX, frontY := findPosInFront(grid, guardX, guardY, guardRotation)
 		if frontX == -1 || frontY == -1 {
-			fmt.Println("Guard is at the edge of the grid")
 			break
 		}
 
 		inFrontContent := grid[frontY][frontX]
 		if inFrontContent == "#" {
 			guardRotation = rotateRotation(guardRotation)
-			fmt.Println("Guard is rotating facing:", guardRotation)
 			continue
 		}
 
