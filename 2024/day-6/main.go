@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/ReidMason/golang-utils/enumerable"
 )
 
 func main() {
@@ -139,10 +141,8 @@ func findPosInFront(grid [][]string, x, y int, direction int) (int, int) {
 
 func findGuard(grid [][]string) (int, int) {
 	for y, row := range grid {
-		for x, cell := range row {
-			if cell == "G" {
-				return x, y
-			}
+		if _, index := enumerable.New(row).Find(func(cell string) bool { return cell == "G" }); index != -1 {
+			return index, y
 		}
 	}
 	return -1, -1
