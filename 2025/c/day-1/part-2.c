@@ -13,16 +13,9 @@ int main()
   int dialValue = 50;
 
   while (fscanf(fptr, " %c%d", &lr, &value) == 2) {
-    bool negative = lr == 'L';
-
     for (int i = 0; i < value; i++)
     {
-      if (negative)
-      {
-        dialValue -= 1;
-      } else {
-        dialValue += 1;
-      }
+      dialValue += lr == 'L' ? -1 : 1;
 
       if (dialValue % 100 == 0) zeroCount++;
     }
