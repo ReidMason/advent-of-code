@@ -3,3 +3,7 @@ target
 input.txt
 *_test.go
 .DS_Store
+obj
+bin
+Folder.Dotsettings.User
+.idea
