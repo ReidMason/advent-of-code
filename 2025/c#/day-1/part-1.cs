@@ -7,20 +7,12 @@ public static class Part1
     var dialValue = 50;
     var zeroCount = 0;
 
-    foreach (var line in lines)
+    var values = lines.Select(x => int.Parse(x.Substring(1)) * (x.StartsWith("L") ? -1 : 1));
+
+    foreach (var value in values)
     {
-      var value = int.Parse(line.Substring(1));
-      var negative = line.StartsWith("L");
-
-      for (var i = 0; i < value; i++)
-      {
-        dialValue += negative ? -1 : 1;
-
-        if (dialValue < 0) dialValue = 100 + dialValue;
-        if (dialValue > 99) dialValue = dialValue - 100;
-      }
-
-      if (dialValue == 0) zeroCount++;
+      dialValue += value;
+      if (dialValue % 100 == 0) zeroCount++;
     }
 
     return zeroCount;
