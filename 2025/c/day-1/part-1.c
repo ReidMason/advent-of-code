@@ -12,11 +12,7 @@ int main()
   int dialValue = 50;
 
   while (fscanf(fptr, " %c%d", &lr, &value) == 2) {
-    if (lr == 'L') {
-      value = -value;
-    }
-
-    dialValue += value;
+    dialValue += value * (lr == 'L' ? -1 : 1);
     if (dialValue % 100 == 0) zeroCount++;
   }
 
