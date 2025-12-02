@@ -79,7 +79,6 @@ long long int solve(char input[])
         long long int tesselsatedInt = atoll(tesselated);
         if (tesselsatedInt == i)
         {
-          printf("added: %lld\n", i);
           total += i;
           break;
         }
