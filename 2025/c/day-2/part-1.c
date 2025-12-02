@@ -45,20 +45,16 @@ long long int solve(char input[])
   long long int total = 0;
 
   while (list) {
-    // printf("%s\n", list->value);
-
     StringList *numbers = split(list->value, "-");
     long long int start = atoll(&numbers->value[0]);
     long long int end = atoll(&numbers->next->value[0]);
 
-    // printf(" start: %d end: %d\n", start, end);
     for (long long int i = start; i <= end; i++)
     {
       int digits = getIntDigits(i);
       char numstr[digits];
       sprintf(numstr,"%lld",i);
 
-      // printf("  checking: %s\n", numstr); 
       int length = strlen(numstr);
       for (int j = 0; j < length/2; j++)
       {
@@ -67,23 +63,18 @@ long long int solve(char input[])
         {
           section[k] = numstr[k];
         }
-        // printf("   chunk: %s\n", section);
 
         int lengthOfSection = strlen(section);
         
         int repetitions = 2; // length / lengthOfSection;
-        // printf("    reps: %d sectionLen: %d\n", repetitions, lengthOfSection);
         char tesselated[digits];
         for (int k = 0; k < repetitions; k++)
         {
           for (int l = 0; l < lengthOfSection; l++)
           {
-            // printf("    k: %d los: %d l: %d idx: %d\n", k, lengthOfSection, l, k * lengthOfSection + l);
             tesselated[k * lengthOfSection + l] = section[l];
           }
         }
-
-        // printf("    tesselated: %s\n", tesselated);
 
         long long int tesselsatedInt = atoll(tesselated);
         if (tesselsatedInt == i)
@@ -124,10 +115,6 @@ int main()
   long long int answer = solve(input);
 
   printf("Answer: %lld\n", answer);
-
-  // Wrong answers
-  // 571808556 - Too low
-  // 12586854255 - Winner winner chicken dinner
 
   return 0;
 }
